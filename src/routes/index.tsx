@@ -216,10 +216,11 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
       lastPlayedRef.current = n;
       if (!audioRef.current) {
         audioRef.current = new Audio("/countdown.mp3");
+        audioRef.current.volume = 0.8;
       }
       audioRef.current.currentTime = 0;
-      audioRef.current.play().catch(() => {
-        // Audio playback might be blocked by browser autoplay policy
+      audioRef.current.play().catch((err) => {
+        console.warn("Audio playback failed, check if /public/countdown.mp3 exists:", err);
       });
     }
   }, [n]);
