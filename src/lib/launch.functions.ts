@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-const DEFAULT_LAUNCH_AT = process.env.DEFAULT_LAUNCH_AT ?? "2026-06-23T08:30:00.000Z";
+const DEFAULT_LAUNCH_AT = process.env.DEFAULT_LAUNCH_AT ?? "2026-06-23T08:37:00.000Z";
 
 function getD1FromContext(context: any) {
   // TanStack Start passes a `context` object into server functions. Try to read
