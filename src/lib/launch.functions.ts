@@ -1,29 +1,22 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createClient } from "@supabase/supabase-js";
 
-function publicClient() {
-  return createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_PUBLISHABLE_KEY!,
-    { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
-  );
+function getD1FromContext(context: any) {
+  // TanStack Start passes a `context` object into server functions. Try to read
+  // the Cloudflare D1 binding from there; fall back to global for local tests.
+  return (context?.env?.LAUNCH_DB ?? (globalThis as any).LAUNCH_DB) as any | undefined;
 }
 
-export const getLaunchInfo = createServerFn({ method: "GET" }).handler(async () => {
-  const supabase = publicClient();
-  const { data, error } = await supabase
-    .from("launch_config")
-    .select("launch_at")
-    .eq("id", 1)
-    .maybeSingle();
+export const getLaunchInfo = createServerFn({ method: "GET" }).handler(async ({ context }) => {
+  const d1 = getD1FromContext(context);
+  if (!d1) {
+    // No D1 binding available — return null launch and server time.
+    return { launchAt: null, serverNow: new Date().toISOString() };
+  }
 
-  if (error) throw new Error(error.message);
-
-  return {
-    launchAt: data?.launch_at ?? null,
-    serverNow: new Date().toISOString(),
-  };
+  const res = await d1.prepare("SELECT launch_at FROM launch_config WHERE id = 1").all();
+  const row = res?.results?.[0] ?? null;
+  return { launchAt: row ? row.launch_at : null, serverNow: new Date().toISOString() };
 });
 
 const updateSchema = z.object({
@@ -33,7 +26,7 @@ const updateSchema = z.object({
 
 export const updateLaunchTime = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => updateSchema.parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const expected = process.env.ADMIN_LAUNCH_PASSWORD;
     if (!expected || data.password !== expected) {
       throw new Error("Invalid admin password");
@@ -43,12 +36,15 @@ export const updateLaunchTime = createServerFn({ method: "POST" })
       throw new Error("Invalid date");
     }
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
-      .from("launch_config")
-      .upsert({ id: 1, launch_at: when.toISOString(), updated_at: new Date().toISOString() });
+    const d1 = getD1FromContext(context);
+    if (!d1) throw new Error("D1 database binding not available");
 
-    if (error) throw new Error(error.message);
+    // Upsert the launch time (D1 supports simple run/prepare APIs)
+    // Use a UPSERT via INSERT ... ON CONFLICT
+    const sql = `INSERT INTO launch_config (id, launch_at, updated_at) VALUES (1, ?, CURRENT_TIMESTAMP)
+      ON CONFLICT (id) DO UPDATE SET launch_at = excluded.launch_at, updated_at = excluded.updated_at;`;
+    await d1.prepare(sql).bind(when.toISOString()).run();
+
     return { success: true, launchAt: when.toISOString() };
   });
 
