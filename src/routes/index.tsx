@@ -209,38 +209,68 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
   const n = Math.max(1, Math.min(10, Math.ceil(remainingSec)));
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const lastPlayedRef = useRef<number | null>(null);
+  const audioUnlockedRef = useRef(false);
 
+  // Initialize audio element
   useEffect(() => {
-    // Play countdown beep on each second transition
-    if (lastPlayedRef.current !== n && n >= 1 && n <= 10) {
-      lastPlayedRef.current = n;
-      if (!audioRef.current) {
-        audioRef.current = new Audio("/countdown.mp3");
-        audioRef.current.preload = "auto";
-        audioRef.current.crossOrigin = "anonymous";
-        audioRef.current.volume = 1;
-        console.log(`[Audio] Created audio element for /countdown.mp3`);
-      }
-      audioRef.current.currentTime = 0;
-      console.log(`[Audio] Playing beep for second ${n}`);
-      audioRef.current.play().catch((err: any) => {
-        console.error(`[Audio] Playback failed for second ${n}:`, err?.message || err);
+    if (!audioRef.current) {
+      audioRef.current = new Audio("/countdown.mp3");
+      audioRef.current.preload = "auto";
+      audioRef.current.crossOrigin = "anonymous";
+      audioRef.current.volume = 1;
+      console.log(`[Audio] Created audio element for /countdown.mp3`);
+    }
+  }, []);
+
+  // Handle click to unlock audio autoplay
+  const handleUnlockAudio = () => {
+    if (!audioUnlockedRef.current && audioRef.current) {
+      audioRef.current.play().then(() => {
+        audioUnlockedRef.current = true;
+        audioRef.current!.pause();
+        console.log(`[Audio] Unlocked audio playback on user interaction`);
+      }).catch((err: any) => {
+        console.error(`[Audio] Failed to unlock:`, err?.message || err);
       });
+    }
+  };
+
+  // Play countdown beep on each second transition
+  useEffect(() => {
+    if (audioUnlockedRef.current && lastPlayedRef.current !== n && n >= 1 && n <= 10) {
+      lastPlayedRef.current = n;
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        console.log(`[Audio] Playing beep for second ${n}`);
+        audioRef.current.play().catch((err: any) => {
+          console.error(`[Audio] Playback failed for second ${n}:`, err?.message || err);
+        });
+      }
     }
   }, [n]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background cursor-pointer"
+      onClick={handleUnlockAudio}
+    >
       <AmbientBackdrop intense />
-      <div
-        key={n}
-        className="font-display text-gold-gradient animate-count-pop animate-gold-shimmer leading-none tabular-nums"
-        style={{
-          fontSize: "min(72vh, 60vw)",
-          textShadow: "0 0 80px color-mix(in oklab, var(--gold) 50%, transparent)",
-        }}
-      >
-        {n}
+      <div className="relative flex flex-col items-center justify-center">
+        <div
+          key={n}
+          className="font-display text-gold-gradient animate-count-pop animate-gold-shimmer leading-none tabular-nums"
+          style={{
+            fontSize: "min(72vh, 60vw)",
+            textShadow: "0 0 80px color-mix(in oklab, var(--gold) 50%, transparent)",
+          }}
+        >
+          {n}
+        </div>
+        {!audioUnlockedRef.current && (
+          <div className="absolute bottom-16 text-center text-xs uppercase tracking-widest text-gold/60 animate-pulse">
+            Click for sound
+          </div>
+        )}
       </div>
     </div>
   );
