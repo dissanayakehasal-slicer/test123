@@ -1,16 +1,11 @@
 name = "live-launch-countdown"
 compatibility_date = "2026-06-23"
-type = "javascript"
 main = "worker.js"
 
 # If you want Wrangler to upload static assets built by Nitro, set the `site.bucket`
 # to the public output folder. The Nitro/Vite build used by this project places
 # static assets in `.output/public` by default.
 site = { bucket = ".output/public" }
-
-# Fill in your account_id if you want deployments to your account instead of
-# using the workers.dev preview. You can leave this blank and set it later.
-account_id = ""
 
 workers_dev = true
 
