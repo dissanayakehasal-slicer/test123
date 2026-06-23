@@ -3,8 +3,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getLaunchInfo } from "@/lib/launch.functions";
 
-// Where ENTER NOW sends users (replace with the real platform URL)
-const ENTER_URL = "https://remix-of-gen-z-science-hub.goyumgeeth43.workers.dev/";
+// Where ENTER NOW sends users.
+const ENTER_URL = "/enter";
 
 export const Route = createFileRoute("/")({
   head: () => ({
