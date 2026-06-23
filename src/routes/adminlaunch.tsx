@@ -92,11 +92,34 @@ function AdminLaunch() {
   );
 }
 
-function toLocalInput(iso: string | null): string {
+// All admin times are entered and displayed in Sri Lanka Standard Time (GMT+5:30).
+const SLST_OFFSET_MIN = 5 * 60 + 30;
+const SLST_LABEL = "Sri Lanka Time (GMT+5:30)";
+
+function toSLSTInput(iso: string | null): string {
   if (!iso) return "";
   const d = new Date(iso);
+  // Shift the absolute instant into a wall-clock that, when read as UTC, equals SLST.
+  const shifted = new Date(d.getTime() + SLST_OFFSET_MIN * 60_000);
   const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return `${shifted.getUTCFullYear()}-${pad(shifted.getUTCMonth() + 1)}-${pad(shifted.getUTCDate())}T${pad(shifted.getUTCHours())}:${pad(shifted.getUTCMinutes())}`;
+}
+
+function slstInputToISO(local: string): string {
+  // local is "YYYY-MM-DDTHH:mm" interpreted as SLST wall-clock.
+  const [datePart, timePart] = local.split("T");
+  const [y, mo, d] = datePart.split("-").map(Number);
+  const [h, mi] = timePart.split(":").map(Number);
+  const asUtc = Date.UTC(y, mo - 1, d, h, mi);
+  return new Date(asUtc - SLST_OFFSET_MIN * 60_000).toISOString();
+}
+
+function formatSLST(iso: string): string {
+  return new Date(iso).toLocaleString("en-GB", {
+    timeZone: "Asia/Colombo",
+    dateStyle: "full",
+    timeStyle: "short",
+  }) + " (GMT+5:30)";
 }
 
 function LaunchEditor() {
