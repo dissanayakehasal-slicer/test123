@@ -211,39 +211,53 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
   const lastPlayedRef = useRef<number | null>(null);
   const contextResumedRef = useRef(false);
 
-  // Initialize AudioContext and set up user interaction listener
+  // Initialize AudioContext and resume it via muted autoplay
   useEffect(() => {
     if (!audioContextRef.current) {
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       console.log(`[Audio] Created Web Audio Context (state: ${audioContextRef.current.state})`);
 
-      // Resume context on any user interaction
-      const resumeContext = () => {
+      // Create a muted audio element that autoplays to resume the AudioContext
+      const dummyAudio = new Audio();
+      dummyAudio.muted = true;
+      dummyAudio.preload = "none";
+      // Use a silent data URL to trigger autoplay without loading a file
+      dummyAudio.src = "data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==";
+      dummyAudio.autoplay = true;
+      
+      dummyAudio.play().then(() => {
+        // Autoplay succeeded, now resume our AudioContext
         const ctx = audioContextRef.current;
         if (ctx && ctx.state === 'suspended') {
           ctx.resume().then(() => {
             contextResumedRef.current = true;
-            console.log(`[Audio] Context resumed after user interaction`);
-          }).catch((err) => {
-            console.error(`[Audio] Failed to resume context:`, err);
+            console.log(`[Audio] Context resumed via muted autoplay`);
           });
         } else if (ctx) {
           contextResumedRef.current = true;
+          console.log(`[Audio] Context already running`);
         }
-      };
-
-      // Listen for any user interaction to resume context
-      document.addEventListener('click', resumeContext, { once: true });
-      document.addEventListener('keydown', resumeContext, { once: true });
-      document.addEventListener('touchstart', resumeContext, { once: true });
-      document.addEventListener('pointerdown', resumeContext, { once: true });
-
-      return () => {
-        document.removeEventListener('click', resumeContext);
-        document.removeEventListener('keydown', resumeContext);
-        document.removeEventListener('touchstart', resumeContext);
-        document.removeEventListener('pointerdown', resumeContext);
-      };
+      }).catch(() => {
+        // Fallback: listen for user interaction
+        console.log(`[Audio] Autoplay blocked, waiting for user gesture`);
+        const resumeContext = () => {
+          const ctx = audioContextRef.current;
+          if (ctx && ctx.state === 'suspended') {
+            ctx.resume().then(() => {
+              contextResumedRef.current = true;
+              console.log(`[Audio] Context resumed after user gesture`);
+            });
+          } else if (ctx) {
+            contextResumedRef.current = true;
+          }
+          document.removeEventListener('click', resumeContext);
+          document.removeEventListener('keydown', resumeContext);
+          document.removeEventListener('touchstart', resumeContext);
+        };
+        document.addEventListener('click', resumeContext, { once: true });
+        document.addEventListener('keydown', resumeContext, { once: true });
+        document.addEventListener('touchstart', resumeContext, { once: true });
+      });
     }
   }, []);
 
