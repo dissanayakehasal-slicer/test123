@@ -186,7 +186,8 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname === ENTRY_PATH) {
-      return Response.redirect(`${url.origin}${PROXY_PREFIX}/`, 302);
+      // Redirect to /app (no trailing slash) to match origin routing behavior.
+      return Response.redirect(`${url.origin}${PROXY_PREFIX}`, 302);
     }
 
     if (url.pathname === PROXY_PREFIX || url.pathname.startsWith(`${PROXY_PREFIX}/`)) {
