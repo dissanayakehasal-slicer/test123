@@ -144,23 +144,27 @@ function PreLaunch({ remainingMs }: { remainingMs: number }) {
   const seconds = total % 60;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-6 py-16">
+    <div className="relative overflow-hidden flex min-h-screen flex-col items-center justify-center px-6 py-16">
+      <div className="pointer-events-none absolute left-4 top-24 h-24 w-24 rounded-full bg-gold/10 blur-3xl" />
+      <div className="pointer-events-none absolute right-10 top-28 h-16 w-16 rounded-full bg-cream/15 blur-3xl" />
+      <div className="pointer-events-none absolute left-1/2 top-14 h-12 w-12 -translate-x-1/2 rounded-full bg-gold/15 blur-3xl" />
+      <div className="pointer-events-none absolute right-8 bottom-32 h-20 w-20 rounded-full bg-gold/10 blur-3xl" />
       <header className="mb-14 flex flex-col items-center text-center animate-reveal-up">
         <div className="mb-4 flex items-center gap-3 text-[11px] uppercase tracking-[0.35em] text-gold">
           <span className="h-px w-12 bg-gold/50" />
           GMS · GEN-ZCIENCE
           <span className="h-px w-12 bg-gold/50" />
         </div>
-        <div className="mb-4 flex flex-wrap items-center justify-center gap-3 rounded-full border border-gold/15 bg-card/40 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
+        <div className="mb-4 flex items-center justify-center gap-3 rounded-full border border-gold/15 bg-card/20 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
           <span className="h-2 w-2 rounded-full bg-gold animate-neon-pulse" />
-          <span className="text-[10px] uppercase tracking-[0.35em]">Launch sequence active</span>
+          Preparing the countdown
           <span className="h-2 w-2 rounded-full bg-gold animate-neon-pulse" />
         </div>
         <h1 className="font-display text-6xl text-cream sm:text-7xl md:text-8xl lg:text-[6.75rem]">
           GEETHMUNASINGHE<span className="text-gold-gradient">.LK</span>
         </h1>
         <p className="mt-5 max-w-2xl font-serif-italic text-xl text-muted-foreground sm:text-2xl">
-          Stand by for the live drop — the launch window is locked and systems are aligned.
+          A new chapter is about to be revealed.
         </p>
       </header>
 
@@ -180,10 +184,10 @@ function PreLaunch({ remainingMs }: { remainingMs: number }) {
           <TimeCell value={seconds} label="Seconds" />
         </div>
         <div className="mt-10 flex flex-wrap justify-center gap-4 text-[11px] uppercase tracking-[0.35em] text-muted-foreground">
-          <span className="rounded-full border border-gold/15 bg-card/40 px-4 py-2 shadow-[0_0_28px_-20px_rgba(255,215,110,0.28)]">Shader pulse</span>
-          <span className="rounded-full border border-gold/15 bg-card/40 px-4 py-2 shadow-[0_0_28px_-20px_rgba(255,215,110,0.28)]">Live feed ready</span>
-          <span className="rounded-full border border-gold/15 bg-card/40 px-4 py-2 shadow-[0_0_28px_-20px_rgba(255,215,110,0.28)]">Atmospheric sync</span>
-          <span className="rounded-full border border-gold/15 bg-card/40 px-4 py-2 shadow-[0_0_28px_-20px_rgba(255,215,110,0.28)]">Precision timing</span>
+          <span className="rounded-full border border-gold/15 bg-card/10 px-4 py-2">Shader pulse</span>
+          <span className="rounded-full border border-gold/15 bg-card/10 px-4 py-2">Live feed ready</span>
+          <span className="rounded-full border border-gold/15 bg-card/10 px-4 py-2">Atmospheric sync</span>
+          <span className="rounded-full border border-gold/15 bg-card/10 px-4 py-2">Precision timing</span>
         </div>
 
         <div className="mt-14 max-w-md text-center font-serif-italic text-sm text-muted-foreground/80 sm:text-base">
@@ -202,20 +206,20 @@ function TimeCell({ value, label }: { value: number; label: string }) {
   const padded = String(Math.max(0, value)).padStart(2, "0");
   return (
     <div className="relative flex min-w-[96px] flex-col items-center sm:min-w-[150px]">
-      <div className="relative overflow-hidden rounded-[2rem] border border-gold/15 bg-card/60 px-6 py-8 sm:px-10 sm:py-12">
+      <div className="relative overflow-hidden rounded-[2rem] border border-gold/10 bg-card/50 px-6 py-8 sm:px-10 sm:py-12">
         <span
-          className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-70"
+          className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-40"
           style={{
-            background: 'radial-gradient(circle at 50% 15%, rgba(255, 245, 175, 0.18), transparent 30%), radial-gradient(circle at 85% 80%, rgba(255, 205, 85, 0.12), transparent 45%)',
+            background: 'radial-gradient(circle at 50% 15%, rgba(255, 245, 175, 0.14), transparent 30%), radial-gradient(circle at 85% 80%, rgba(255, 205, 85, 0.08), transparent 45%)',
           }}
         />
         <span
-          className="pointer-events-none absolute inset-x-6 top-5 h-1 rounded-full bg-gradient-to-r from-gold/80 via-transparent to-transparent blur-sm"
+          className="pointer-events-none absolute inset-x-6 top-5 h-1 rounded-full bg-gradient-to-r from-gold/60 via-transparent to-transparent blur-sm"
         />
         <span
-          className="pointer-events-none absolute inset-x-6 bottom-5 h-1 rounded-full bg-gradient-to-l from-gold/80 via-transparent to-transparent blur-sm"
+          className="pointer-events-none absolute inset-x-6 bottom-5 h-1 rounded-full bg-gradient-to-l from-gold/60 via-transparent to-transparent blur-sm"
         />
-        <div className="relative font-display text-[6.5rem] text-gold-gradient sm:text-[7.25rem] md:text-[7.75rem] lg:text-[8.25rem] tabular-nums tracking-[-0.05em] leading-none animate-neon-pulse animate-neon-flicker-fast">
+        <div className="relative font-display text-[6.75rem] text-gold-gradient sm:text-[7.5rem] md:text-[8rem] lg:text-[8.5rem] tabular-nums tracking-[-0.05em] leading-none animate-neon-pulse animate-neon-flicker-fast">
           {padded}
         </div>
       </div>
