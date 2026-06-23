@@ -19,12 +19,19 @@ async function getServer() {
 
 export default {
   async fetch(request, env, ctx) {
+    // Serve static assets from the Workers Sites binding first.
+    if (env.__STATIC_CONTENT) {
+      const staticResponse = await env.__STATIC_CONTENT.fetch(request);
+      if (staticResponse.status !== 404) {
+        return staticResponse;
+      }
+    }
+
     const server = await getServer();
     if (server && typeof server.fetch === 'function') {
       return server.fetch(request, env, ctx);
     }
 
-    // If the server build isn't present, return an informative response.
     return new Response('Server build missing — run `npm run build` before publishing.', {
       status: 500,
       headers: { 'content-type': 'text/plain; charset=utf-8' },
