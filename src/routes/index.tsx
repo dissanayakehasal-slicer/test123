@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
 
 function useServerSyncedNow() {
   const DEFAULT_LAUNCH_AT = useMemo(
-    () => new Date("2026-06-23T11:40:00.000Z").getTime(),
+    () => new Date("2026-06-23T11:46:00.000Z").getTime(),
     [],
   );
 
@@ -216,7 +216,6 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
       lastPlayedRef.current = n;
       if (!audioRef.current) {
         audioRef.current = new Audio("/countdown.mp3");
-        audioRef.current.volume = 0.8;
       }
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch((err) => {
