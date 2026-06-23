@@ -313,14 +313,17 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
   }, [n]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background px-4">
       <AmbientBackdrop intense />
       <div
         key={n}
-        className="font-display text-gold-gradient animate-count-pop animate-gold-shimmer leading-none tabular-nums"
+        className="font-display text-gold-gradient animate-count-pop animate-gold-shimmer leading-none tabular-nums text-center"
         style={{
-          fontSize: "min(72vh, 60vw)",
+          fontSize: "clamp(5rem, min(72vh, 90vw), 18rem)",
           textShadow: "0 0 80px color-mix(in oklab, var(--gold) 50%, transparent)",
+          maxWidth: "100%",
+          maxHeight: "100%",
+          whiteSpace: "nowrap",
         }}
       >
         {n}
