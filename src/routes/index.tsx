@@ -19,7 +19,12 @@ export const Route = createFileRoute("/")({
 });
 
 function useServerSyncedNow() {
-  const { data, refetch } = useQuery({
+  const DEFAULT_LAUNCH_AT = useMemo(
+    () => new Date("2026-06-23T08:25:00.000Z").getTime(),
+    [],
+  );
+
+  const { data, refetch, isError } = useQuery({
     queryKey: ["launch-info"],
     queryFn: () => getLaunchInfo(),
     refetchInterval: 30_000,
@@ -46,9 +51,9 @@ function useServerSyncedNow() {
 
   return {
     now,
-    launchAt: data?.launchAt ? new Date(data.launchAt).getTime() : null,
+    launchAt: data?.launchAt ? new Date(data.launchAt).getTime() : DEFAULT_LAUNCH_AT,
     refetch,
-    loaded: !!data,
+    loaded: !!data || isError,
   };
 }
 

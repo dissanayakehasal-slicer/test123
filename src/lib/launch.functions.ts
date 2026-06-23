@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+const DEFAULT_LAUNCH_AT = process.env.DEFAULT_LAUNCH_AT ?? "2026-06-23T08:25:00.000Z";
+
 function getD1FromContext(context: any) {
   // TanStack Start passes a `context` object into server functions. Try to read
   // the Cloudflare D1 binding from there; fall back to global for local tests.
@@ -10,13 +12,13 @@ function getD1FromContext(context: any) {
 export const getLaunchInfo = createServerFn({ method: "GET" }).handler(async ({ context }) => {
   const d1 = getD1FromContext(context);
   if (!d1) {
-    // No D1 binding available — return null launch and server time.
-    return { launchAt: null, serverNow: new Date().toISOString() };
+    // No D1 binding available — fall back to the default configured launch time.
+    return { launchAt: DEFAULT_LAUNCH_AT, serverNow: new Date().toISOString() };
   }
 
   const res = await d1.prepare("SELECT launch_at FROM launch_config WHERE id = 1").all();
   const row = res?.results?.[0] ?? null;
-  return { launchAt: row ? row.launch_at : null, serverNow: new Date().toISOString() };
+  return { launchAt: row?.launch_at ?? DEFAULT_LAUNCH_AT, serverNow: new Date().toISOString() };
 });
 
 const updateSchema = z.object({

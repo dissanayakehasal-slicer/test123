@@ -2,11 +2,11 @@ name = "live-launch-countdown"
 compatibility_date = "2026-06-23"
 compatibility_flags = ["nodejs_compat"]
 main = "worker.js"
+workers_dev = true
 
 [assets]
 directory = "dist/client"
 binding = "ASSETS"
-workers_dev = true
 
 # Declare the D1 database binding named LAUNCH_DB. Replace `database_name` with
 # your D1 database name in Cloudflare when provisioning.
