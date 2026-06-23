@@ -99,7 +99,7 @@ function AmbientBackdrop({ intense }: { intense: boolean }) {
       <div className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(ellipse 120% 80% at 50% 120%, rgba(183, 132, 56, 0.18), transparent 70%)",
+            "radial-gradient(ellipse 120% 80% at 50% 120%, color-mix(in oklab, var(--gold-deep) 18%, transparent), transparent 70%)",
         }}
       />
       {/* Subtle grain */}
@@ -114,7 +114,7 @@ function AmbientBackdrop({ intense }: { intense: boolean }) {
         <div className="pointer-events-none absolute inset-0 -z-10 transition-opacity duration-700"
           style={{
             background:
-              "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255, 209, 120, 0.18), transparent 70%)",
+              "radial-gradient(ellipse 60% 50% at 50% 50%, color-mix(in oklab, var(--gold-bright) 18%, transparent), transparent 70%)",
           }}
         />
       )}
@@ -320,7 +320,7 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
         className="font-display text-gold-gradient animate-count-pop animate-gold-shimmer leading-none tabular-nums text-center"
         style={{
           fontSize: "clamp(5rem, min(72vh, 90vw), 18rem)",
-          textShadow: "0 0 80px rgba(255, 215, 105, 0.45)",
+          textShadow: "0 0 80px color-mix(in oklab, var(--gold) 50%, transparent)",
           maxWidth: "100%",
           maxHeight: "100%",
           whiteSpace: "nowrap",
