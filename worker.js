@@ -103,15 +103,16 @@ function getProxyTarget(request, env) {
   // Strip the proxy prefix for asset requests so the origin serves them from
   // its normal static path.
   if (path === PROXY_PREFIX || path === `${PROXY_PREFIX}/`) {
-    target.pathname = '/';
+    // Request the origin's /app entry (no trailing slash) for navigation.
+    target.pathname = PROXY_PREFIX;
   } else if (path.startsWith(`${PROXY_PREFIX}/`)) {
     const withoutPrefix = path.slice(PROXY_PREFIX.length);
     // If this looks like an asset request, forward to the stripped path.
     if (assetExtRe.test(withoutPrefix)) {
       target.pathname = withoutPrefix.startsWith('/') ? withoutPrefix : `/${withoutPrefix}`;
     } else if (accept.includes('text/html')) {
-      // Navigation: serve the origin root (index.html) so client-side routing works.
-      target.pathname = '/';
+      // Navigation: request the origin's /app entry so it returns the SPA HTML.
+      target.pathname = PROXY_PREFIX;
     } else {
       // Default: forward with the prefix stripped.
       target.pathname = withoutPrefix.startsWith('/') ? withoutPrefix : `/${withoutPrefix}`;
