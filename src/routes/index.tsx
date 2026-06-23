@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
 
 function useServerSyncedNow() {
   const DEFAULT_LAUNCH_AT = useMemo(
-    () => new Date("2026-06-23T08:41:00.000Z").getTime(),
+    () => new Date("2026-06-23T10:40:00.000Z").getTime(),
     [],
   );
 
@@ -250,7 +250,7 @@ function LiveState() {
 
       <a
         href={ENTER_URL}
-        className="group relative mt-14 inline-flex items-center gap-4 overflow-hidden rounded-full border-2 border-gold/80 bg-gradient-to-b from-gold-bright/95 to-gold-deep px-12 py-5 font-display text-xl tracking-[0.4em] text-obsidian transition-all duration-500 hover:scale-[1.05] animate-reveal-up animate-neon-pulse sm:text-2xl"
+        className="group relative mt-14 inline-flex items-center gap-4 overflow-hidden rounded-full border-2 border-gold/80 bg-gradient-to-b from-gold-bright/95 to-gold-deep px-12 py-5 font-display text-xl tracking-[0.4em] text-obsidian transition-all duration-500 hover:scale-[1.05] animate-reveal-up animate-neon-pulse animate-neon-cta sm:text-2xl"
         style={{ animationDelay: "0.6s" }}
       >
         <span className="relative z-10 animate-neon-flicker">Enter Now</span>
