@@ -137,8 +137,7 @@ async function proxyRequest(request, env) {
     const v = incoming.get(k);
     if (v) forwardedHeaders.set(k, v);
   }
-  // Explicitly set the Host header to the origin's host so the origin routes correctly.
-  forwardedHeaders.set('Host', target.host);
+  // Let the fetch API set the Host header automatically for the target.
 
   const proxyRequest = new Request(target.href, {
     method: request.method,
