@@ -216,10 +216,15 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
       lastPlayedRef.current = n;
       if (!audioRef.current) {
         audioRef.current = new Audio("/countdown.mp3");
+        audioRef.current.preload = "auto";
+        audioRef.current.crossOrigin = "anonymous";
+        audioRef.current.volume = 1;
+        console.log(`[Audio] Created audio element for /countdown.mp3`);
       }
       audioRef.current.currentTime = 0;
-      audioRef.current.play().catch((err) => {
-        console.warn("Audio playback failed, check if /public/countdown.mp3 exists:", err);
+      console.log(`[Audio] Playing beep for second ${n}`);
+      audioRef.current.play().catch((err: any) => {
+        console.error(`[Audio] Playback failed for second ${n}:`, err?.message || err);
       });
     }
   }, [n]);
