@@ -175,23 +175,23 @@
   0% { transform: translateX(-120%); }
   100% { transform: translateX(120%); }
 }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
 @keyframes neon-cta {
   0%, 100% {
     box-shadow:
-      0 0 22px rgba(255, 235, 150, 0.32),
-      0 0 62px rgba(255, 210, 80, 0.22),
-      inset 0 0 24px rgba(255, 238, 156, 0.22);
+      0 0 16px rgba(255, 235, 150, 0.28),
+      0 0 48px rgba(255, 210, 80, 0.18),
+      inset 0 0 18px rgba(255, 238, 156, 0.2);
   }
   50% {
     box-shadow:
-      0 0 36px rgba(255, 245, 175, 0.5),
-      0 0 100px rgba(255, 215, 105, 0.28),
-      inset 0 0 36px rgba(255, 240, 168, 0.3);
+      0 0 26px rgba(255, 245, 175, 0.4),
+      0 0 78px rgba(255, 215, 105, 0.25),
+      inset 0 0 28px rgba(255, 240, 168, 0.25);
   }
-}
-@keyframes neon-edge {
-  0%, 100% { opacity: 0.6; transform: translateY(0); }
-  50% { opacity: 0.95; transform: translateY(-2px); }
 }
 
 @utility animate-count-pop { animation: count-pop 1s ease-in-out forwards; }
@@ -200,7 +200,6 @@
 @utility animate-reveal-up { animation: reveal-up 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 @utility animate-vignette-pulse { animation: vignette-pulse 6s ease-in-out infinite; }
 @utility animate-neon-pulse { animation: neon-pulse 2.4s ease-in-out infinite; }
-@utility animate-neon-flicker { animation: neon-flicker 3s linear infinite; }
-@utility animate-neon-flicker-fast { animation: neon-flicker 2s linear infinite; }
-@utility animate-neon-edge { animation: neon-edge 2.4s ease-in-out infinite; }
+@utility animate-neon-flicker { animation: neon-flicker 4s linear infinite; }
 @utility animate-neon-sweep { animation: neon-sweep 2.8s ease-in-out infinite; }
+@utility animate-floating { animation: float 5.5s ease-in-out infinite; }
