@@ -207,57 +207,54 @@ function TimeCell({ value, label }: { value: number; label: string }) {
 
 function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
   const n = Math.max(1, Math.min(10, Math.ceil(remainingSec)));
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
   const lastPlayedRef = useRef<number | null>(null);
-  const audioUnlockedRef = useRef(false);
 
-  // Initialize audio element
+  // Initialize AudioContext on first mount
   useEffect(() => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio("/countdown.mp3");
-      audioRef.current.preload = "auto";
-      audioRef.current.crossOrigin = "anonymous";
-      audioRef.current.volume = 1;
-      console.log(`[Audio] Created audio element for /countdown.mp3`);
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      console.log(`[Audio] Created Web Audio Context`);
     }
   }, []);
 
-  // Unlock audio on any user interaction
+  // Play beep on each second transition
   useEffect(() => {
-    const unlockAudio = () => {
-      if (!audioUnlockedRef.current && audioRef.current) {
-        audioRef.current.play().then(() => {
-          audioUnlockedRef.current = true;
-          audioRef.current!.pause();
-          console.log(`[Audio] Unlocked audio playback on user interaction`);
-        }).catch((err: any) => {
-          console.error(`[Audio] Failed to unlock:`, err?.message || err);
-        });
-      }
-    };
-
-    const events = ["click", "keydown", "touchstart", "mousemove"];
-    events.forEach(event => {
-      document.addEventListener(event, unlockAudio, { once: true });
-    });
-
-    return () => {
-      events.forEach(event => {
-        document.removeEventListener(event, unlockAudio);
-      });
-    };
-  }, []);
-
-  // Play countdown beep on each second transition
-  useEffect(() => {
-    if (audioUnlockedRef.current && lastPlayedRef.current !== n && n >= 1 && n <= 10) {
+    if (lastPlayedRef.current !== n && n >= 1 && n <= 10) {
       lastPlayedRef.current = n;
-      if (audioRef.current) {
-        audioRef.current.currentTime = 0;
-        console.log(`[Audio] Playing beep for second ${n}`);
-        audioRef.current.play().catch((err: any) => {
-          console.error(`[Audio] Playback failed for second ${n}:`, err?.message || err);
-        });
+      
+      const ctx = audioContextRef.current;
+      if (ctx) {
+        try {
+          // Resume context if suspended (required in some browsers)
+          if (ctx.state === 'suspended') {
+            ctx.resume();
+          }
+
+          // Create oscillator for beep
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          
+          // Beep parameters
+          osc.frequency.value = 1000; // 1kHz beep
+          osc.type = 'sine';
+          
+          // Fade in and out to avoid clicks
+          const now = ctx.currentTime;
+          gain.gain.setValueAtTime(0, now);
+          gain.gain.linearRampToValueAtTime(0.3, now + 0.01);
+          gain.gain.linearRampToValueAtTime(0, now + 0.2);
+          
+          osc.start(now);
+          osc.stop(now + 0.2);
+          
+          console.log(`[Audio] Played beep for second ${n}`);
+        } catch (err: any) {
+          console.error(`[Audio] Failed to play beep:`, err?.message || err);
+        }
       }
     }
   }, [n]);
