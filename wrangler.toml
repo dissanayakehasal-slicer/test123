@@ -6,6 +6,9 @@ workers_dev = true
 
 vars = { ORIGIN_APP = "https://remix-of-gen-z-science-hub.goyumgeeth43.workers.dev" }
 
+[build]
+command = "npm run build"
+
 [assets]
 directory = "dist/client"
 binding = "ASSETS"
